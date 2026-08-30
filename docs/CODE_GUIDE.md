@@ -203,7 +203,13 @@ sprite-gen 逐帧行走图集接入方式：`raw/<state>.png` → `extract` 抠�
    若做复杂弹幕/AABB 精细碰撞，再换 Area2D 分层
 2. **代码 UI vs .tscn UI**：见 §1；想要编辑器可视化，可把 HUD 逐步搬进场景，
    信号连接方式不变
-3. **GDScript O(n²) 分离**：200 实体内够用；破千需上空间哈希
-4. **`_draw` 手绘 vs Sprite2D 节点**：选 `_draw` 是为了动画矩阵和字形兜底
+3. **空间哈希碰撞**：敌人分离/子弹命中/玩家受击全部走 `spatial_grid`（100px 网格，
+   每物理帧初重建），O(n²) → 邻域查询；实体破千依然稳
+4. **物理插值**：`project.godot` 开启 `common/physics_interpolation`，
+   所有生成点调用 `reset_physics_interpolation()` 防出生拉丝——
+   高刷屏（144Hz+）下移动依然顺滑（渲染帧率不再被物理 60Hz 卡住）
+5. **`_draw` 手绘 vs Sprite2D 节点**：选 `_draw` 是为了动画矩阵和字形兜底
    统一在一个函数里；做复杂角色骨骼动画才需要 AnimatedSprite2D/骨架
-5. **英文 prompt 出图**：图像模型对英文 spec 遵从度更高；游戏内文案保持中文
+6. **贴图缓存**：实体把 `KP.tex()` 结果缓存为成员变量（生成时取一次），
+   `_draw` 热路径零字典查询
+7. **英文 prompt 出图**：图像模型对英文 spec 遵从度更高；游戏内文案保持中文

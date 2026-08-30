@@ -7,6 +7,7 @@ var value := 1
 var t := 0.0
 var pulled := false
 var force_pull := false
+var tex: Texture2D = null
 
 func setup(m, p: Vector2, v: int, k := "xp") -> void:
 	main = m
@@ -14,6 +15,7 @@ func setup(m, p: Vector2, v: int, k := "xp") -> void:
 	value = v
 	kind = k
 	t = randf() * TAU
+	tex = KP.tex("gem")
 
 func force_magnet() -> void:
 	force_pull = true
@@ -37,7 +39,6 @@ func _physics_process(delta: float) -> void:
 func _draw() -> void:
 	match kind:
 		"xp":
-			var tex := KP.tex("gem")
 			if tex != null:
 				var s := 17.0 + value * 3.0
 				draw_texture_rect(tex, Rect2(Vector2(-s * 0.5, -s * 0.5 + sin(t * 4.0) * 2.0), Vector2(s, s)), false)

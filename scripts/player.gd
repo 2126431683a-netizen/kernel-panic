@@ -120,6 +120,7 @@ func _try_fire() -> void:
 		b.setup(main, global_position + Vector2.from_angle(base) * 14.0,
 				Vector2.from_angle(base + off) * bullet_speed, damage, pierce)
 		main.bullets_node.add_child(b)
+		b.reset_physics_interpolation()
 	Sfx.play("shoot")
 	main.fx_ring(global_position + Vector2.from_angle(base) * 20.0, KP.CYAN, 3.0, 11.0)
 

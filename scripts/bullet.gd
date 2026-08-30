@@ -7,6 +7,7 @@ var damage := 10.0
 var pierce := 1
 var ttl := 1.2
 var pt := 0.0
+var tex: Texture2D = null
 
 func setup(m, p: Vector2, v: Vector2, d: float, pc: int) -> void:
 	main = m
@@ -14,6 +15,7 @@ func setup(m, p: Vector2, v: Vector2, d: float, pc: int) -> void:
 	vel = v
 	damage = d
 	pierce = pc
+	tex = KP.tex("bullet")
 
 func _physics_process(delta: float) -> void:
 	position += vel * delta
@@ -25,7 +27,6 @@ func _physics_process(delta: float) -> void:
 	queue_redraw()
 
 func _draw() -> void:
-	var tex := KP.tex("bullet")
 	var pulse := 1.0 + sin(pt * 18.0) * 0.1
 	if tex != null and vel.length_squared() > 0.01:
 		draw_set_transform(Vector2.ZERO, vel.angle(), Vector2(pulse, pulse))

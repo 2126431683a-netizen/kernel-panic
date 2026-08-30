@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KERNEL PANIC · 内核恐慌（北京篇）— GitHub 项目主页</title>
+<style>
+	:root { --green: #3dff7c; --gold: #ffd257; --jade: #59ffb0; --bg: #050b07; --panel: #0a1410; }
+	* { margin: 0; padding: 0; box-sizing: border-box; }
+	body { background: var(--bg); color: #c9f5d9; font-family: "Microsoft YaHei", "PingFang SC", sans-serif; line-height: 1.7; }
+	.wrap { max-width: 960px; margin: 0 auto; padding: 40px 24px; }
+	.scan { position: fixed; inset: 0; pointer-events: none; background: repeating-linear-gradient(0deg, transparent 0 2px, rgba(0,0,0,.12) 2px 4px); }
+	h1 { font-size: 2.6em; color: var(--gold); letter-spacing: 4px; text-shadow: 0 0 18px rgba(255,210,87,.35); }
+	.sub { color: var(--jade); font-size: 1.15em; margin: 6px 0 4px; }
+	.tagline { color: #7ba88e; margin-bottom: 26px; }
+	.badges span { display: inline-block; background: #10241a; border: 1px solid #1f5c3a; color: var(--green); border-radius: 4px; padding: 2px 12px; margin: 3px 6px 3px 0; font-size: .85em; }
+	h2 { color: var(--gold); font-size: 1.35em; margin: 34px 0 12px; border-left: 4px solid var(--gold); padding-left: 12px; }
+	.card { background: var(--panel); border: 1px solid #1c3a2a; border-radius: 10px; padding: 18px 22px; margin: 12px 0; }
+	.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px; }
+	.grid .card { margin: 0; }
+	b { color: #eafff2; }
+	code, .mono { font-family: Consolas, "Cascadia Mono", monospace; color: var(--jade); background: #0c1a13; padding: 1px 7px; border-radius: 4px; }
+	.cmd { display: block; padding: 10px 14px; margin: 8px 0; }
+	a { color: #7fd7ff; text-decoration: none; } a:hover { text-decoration: underline; }
+	ul { padding-left: 22px; } li { margin: 4px 0; }
+	.warn { background: #1a0d0d; border: 1px solid #5c1f1f; border-radius: 10px; padding: 14px 20px; color: #ffb3b3; margin: 16px 0; }
+	table { width: 100%; border-collapse: collapse; margin: 10px 0; }
+	th, td { border: 1px solid #1c3a2a; padding: 8px 12px; text-align: left; font-size: .95em; }
+	th { color: var(--gold); background: #0d1a12; }
+	footer { margin-top: 46px; color: #4d7a61; font-size: .85em; text-align: center; }
+</style>
+</head>
+<body>
+<div class="scan"></div>
+<div class="wrap">
+	<h1>KERNEL PANIC</h1>
+	<div class="sub">— 内 核 恐 惶 · 北 京 篇 —</div>
+	<div class="tagline">二次元动漫风 · 割草生存 Roguelite · Godot 4 全代码架构 · AI 美术管线</div>
+	<div class="badges">
+		<span>Godot 4.7</span><span>GDScript ~1500 行</span><span>11+ 张 AI 生成资产</span><span>零外部资源依赖</span><span>Apache-2.0</span>
+	</div>
+
+	<h2>这是什么</h2>
+	<div class="card">
+		你是一名<b>系统管理员</b>，被困在失控的北京生产节点。敌对进程（▓glitch · ◆疾行 · █石狮卫士 · ★神龙）从四面八方涌来——
+		<b>自动开火清怪、捡经验数据包、注入升级补丁</b>，在故宫城墙与胡同屋顶之间活到系统重启。
+		每次击杀都会在终端打出 <code>kill -9 PID xxxx — terminated</code>。
+	</div>
+
+	<h2>玩法特性（对标 Vampire Survivors / Brotato）</h2>
+	<div class="grid">
+		<div class="card"><b>🔫 三武器槽位</b><br>高频扳手 / 回旋扳手（环绕护体）/ 引雷术（链式天雷），升级解锁与强化</div>
+		<div class="card"><b>🧬 12 种补丁构建</b><br>超频射击、进程分叉、防火墙、数据挖掘……带等级上限的自由搭配</div>
+		<div class="card"><b>💎 稀有度系统</b><br>普通 / 稀有◆（×2）/ 史诗★（×3），卡牌显示 Lv.当前 → 目标</div>
+		<div class="card"><b>🎁 掉落生态</b><br>恢复包 · 全场磁铁 · 精英宝箱 · 灯笼与服务器机柜可破坏物</div>
+		<div class="card"><b>⚔️ 事件时间轴</b><br>2:30/6:00 包围网环形合围 · 5:00 BOSS 巨型进程王（顶部血条）</div>
+		<div class="card"><b>✨ 程序化动效</b><br>颠步/挤压拉伸/蹦跳落地压扁/扬尘 + sprite-gen 逐帧行走图集</div>
+	</div>
+
+	<h2>运行</h2>
+	<div class="card mono cmd">git clone https://github.com/2126431683a-netizen/kernel-panic.git<br>godot --path kernel-panic</div>
+	<div class="card">
+		<b>操作：</b>WASD/方向键移动 · 自动锁定开火 · 1/2/3 选补丁 · ESC 暂停 · R 重开<br>
+		<b>依赖：</b>Godot 4.7+（<a href="https://godotengine.org/download">godotengine.org</a>），无其他依赖，音效运行时合成
+	</div>
+
+	<h2>学习文档（三件套）</h2>
+	<div class="card">
+		<ul>
+			<li><b>PRD 产品需求</b> — <a href="https://raw.githubusercontent.com/2126431683a-netizen/kernel-panic/main/docs/PRD.md">docs/PRD.md</a>：背景 / 用户 / 需求清单 / 指标 / 路线图</li>
+			<li><b>GDD 游戏设计</b> — <a href="https://raw.githubusercontent.com/2126431683a-netizen/kernel-panic/main/docs/GDD.md">docs/GDD.md</a>：核心循环 / 数值表 / 敌系 / 武器 / 掉落 / 事件</li>
+			<li><b>CODE_GUIDE 源码讲解</b> — <a href="https://raw.githubusercontent.com/2126431683a-netizen/kernel-panic/main/docs/CODE_GUIDE.md">docs/CODE_GUIDE.md</a>：架构 / 逐文件 / 一帧生命周期 / 修改指南</li>
+		</ul>
+		想调难度？所有数值集中在 <code>scripts/game_config.gd</code>，中文注释。
+	</div>
+
+	<h2>AI 美术管线</h2>
+	<div class="card">
+		全部贴图由图像模型生成后经确定性管线进入游戏：<b>nano-banana-pro / gpt-image 生成</b> →
+		背景明暗自适应洪泛抠底 → 发光边缘羽化 → sprite-gen 组件行管线出逐帧行走图集（品红色度键 + 身份锁定）→
+		Godot 运行时优雅降级（图集 → 单图 → ASCII 字形三级兜底）。
+		任何一张图生成失败，游戏照常可玩。
+	</div>
+
+	<h2>源码导航</h2>
+	<table>
+		<tr><th>文件</th><th>职责</th></tr>
+		<tr><td class="mono">scripts/main.gd</td><td>状态机 · 刷怪导演 · 碰撞 · 升级池 · 事件系统</td></tr>
+		<tr><td class="mono">scripts/player.gd</td><td>移动 / 自动开火 / 三级武器 / 程序化动画</td></tr>
+		<tr><td class="mono">scripts/enemy.gd</td><td>四类敌人 · 群体分离 · 蹦跳动画 · Boss</td></tr>
+		<tr><td class="mono">scripts/hud.gd</td><td>主菜单 / HUD / 升级卡 / 暂停 / 结算</td></tr>
+		<tr><td class="mono">scripts/game_config.gd</td><td>调参中心（改数值只动这里）</td></tr>
+		<tr><td class="mono">tools/process_textures.gd</td><td>AI 贴图后处理（抠图/羽化/缩放）</td></tr>
+	</table>
+
+	<div class="warn">⚠️ 如果 github.com 打不开：本页面走的是 github.io（可直连）。克隆仓库请给 git 配代理：
+	<code>git config --global http.proxy http://127.0.0.1:7897</code></div>
+
+	<footer>KERNEL PANIC v2.2 · Godot 4.7 · 用 AI 生成美术 + 程序化一切 · Apache-2.0</footer>
+</div>
+</body>
+</html>

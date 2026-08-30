@@ -30,6 +30,7 @@ var hop_height := 5.0
 var facing := 1.0
 var orbit_cd := 0.0
 var is_boss := false
+var tex: Texture2D = null
 
 func setup(m, type: String, hp_mult: float) -> void:
 	main = m
@@ -49,6 +50,7 @@ func setup(m, type: String, hp_mult: float) -> void:
 	t = randf() * TAU
 	hop_phase = randf() * TAU
 	hop_height = c["hop"]
+	tex = KP.tex("enemy_" + type)
 
 func _physics_process(delta: float) -> void:
 	if dead or main.player == null or not is_instance_valid(main.player):
@@ -60,7 +62,8 @@ func _physics_process(delta: float) -> void:
 	if Engine.get_physics_frames() % 3 == sep_phase:
 		sep = Vector2.ZERO
 		var checked := 0
-		for o in main.enemies_node.get_children():
+		var near: Array = main.grid_neighbors(global_position, 30.0)
+		for o in near:
 			if o == self or not is_instance_valid(o) or o.dead:
 				continue
 			var d2 := global_position.distance_squared_to(o.global_position)
@@ -103,7 +106,6 @@ func _draw() -> void:
 	var squash := 1.0 - (1.0 - hopv) * 0.12
 	var wobble := sin(t * 4.0 + float(pid)) * 0.05
 	draw_set_transform(Vector2(0.0, -hop), wobble, Vector2(facing * (1.0 + (1.0 - squash) * 0.8), squash))
-	var tex := KP.tex("enemy_" + gtype)
 	if tex != null:
 		var sz := radius * 3.4
 		draw_texture_rect(tex, Rect2(Vector2(-sz * 0.5, -sz * 0.5), Vector2(sz, sz)), false)

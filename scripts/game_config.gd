@@ -8,6 +8,7 @@ class_name GameConfig
 const ARENA_W := 1500.0            ## 地图半宽（总宽 = ×2 = 3000）
 const ARENA_H := 950.0             ## 地图半高
 const MAX_ENEMIES := 220           ## 同屏敌人上限（性能保护）
+const GRID_CELL := 100.0           ## 空间哈希网格边长（碰撞/分离加速）
 
 ## ---- 玩家基础属性 ----
 const PLAYER_MAX_HP := 100.0       ## 初始最大生命

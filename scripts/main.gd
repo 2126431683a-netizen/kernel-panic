@@ -55,6 +55,30 @@ var props_node: Node2D
 
 var shake := 0.0
 var decor: Array = []
+var spatial_grid := {}
+
+func _build_grid() -> void:
+	spatial_grid.clear()
+	for e in enemies_node.get_children():
+		if not is_instance_valid(e) or e.dead:
+			continue
+		var key := Vector2i(floori(e.global_position.x / GameConfig.GRID_CELL), floori(e.global_position.y / GameConfig.GRID_CELL))
+		if spatial_grid.has(key):
+			spatial_grid[key].append(e)
+		else:
+			spatial_grid[key] = [e]
+
+func grid_neighbors(pos: Vector2, reach: float) -> Array:
+	## 返回 pos 周围 reach 范围覆盖到的网格桶里的敌人（近似邻域，够用于分离/碰撞）
+	var out: Array = []
+	var r := int(ceili(reach / GameConfig.GRID_CELL))
+	var cx := floori(pos.x / GameConfig.GRID_CELL)
+	var cy := floori(pos.y / GameConfig.GRID_CELL)
+	for dx in range(-r, r + 1):
+		for dy in range(-r, r + 1):
+			var arr: Array = spatial_grid.get(Vector2i(cx + dx, cy + dy), [])
+			out.append_array(arr)
+	return out
 
 func _ready() -> void:
 	randomize()
@@ -113,6 +137,7 @@ func _process(delta: float) -> void:
 func _physics_process(delta: float) -> void:
 	if state != State.PLAYING or player == null:
 		return
+	_build_grid()
 	_director(delta)
 	_collisions()
 	var s := int(elapsed)
@@ -162,6 +187,7 @@ func _spawn_events() -> void:
 			e.setup(self, "runner", (1.0 + elapsed / GameConfig.HP_GROWTH_TIME_DIV) * (1.0 + wave * GameConfig.HP_GROWTH_WAVE))
 			e.position = pos
 			enemies_node.add_child(e)
+			e.reset_physics_interpolation()
 	## 五分钟 Boss
 	if not boss_spawned and elapsed >= GameConfig.BOSS_AT:
 		boss_spawned = true
@@ -176,6 +202,7 @@ func _spawn_events() -> void:
 		bpos.y = clampf(bpos.y, -ARENA_H + 40.0, ARENA_H - 40.0)
 		b.position = bpos
 		enemies_node.add_child(b)
+		b.reset_physics_interpolation()
 		boss_ref = b
 		hud.set_boss("巨型进程王", 1.0)
 		hud.banner("!! BOSS : 巨型进程王 !!")
@@ -203,16 +230,18 @@ func _spawn_enemy(type: String, near_player := false) -> void:
 	pos.y = clampf(pos.y, -ARENA_H + 40.0, ARENA_H - 40.0)
 	e.position = pos
 	enemies_node.add_child(e)
+	e.reset_physics_interpolation()
 
 # ---------------- 碰撞判定 ----------------
 
 func _collisions() -> void:
 	var enemies := enemies_node.get_children()
-	## 子弹 × 敌人
+	## 子弹 × 敌人（网格邻域查询）
 	for b in bullets_node.get_children():
 		if not is_instance_valid(b):
 			continue
-		for e in enemies:
+		var near: Array = grid_neighbors(b.global_position, 48.0)
+		for e in near:
 			if not is_instance_valid(e) or e.dead:
 				continue
 			var rr: float = e.radius + 6.0
@@ -242,16 +271,18 @@ func _collisions() -> void:
 	if player.orbit_count > 0:
 		for i in player.orbit_count:
 			var op: Vector2 = player.global_position + Vector2.from_angle(player.orbit_angle + float(i) * TAU / float(player.orbit_count)) * GameConfig.ORBIT_RADIUS
-			for e in enemies:
+			var near_o: Array = grid_neighbors(op, 42.0)
+			for e in near_o:
 				if not is_instance_valid(e) or e.dead or e.orbit_cd > 0.0:
 					continue
 				var ro: float = e.radius + 10.0
 				if op.distance_squared_to(e.global_position) <= ro * ro:
 					e.hit(player.orbit_dmg)
 					e.orbit_cd = GameConfig.ORBIT_HIT_CD
-	## 敌人 × 玩家
+	## 敌人 × 玩家（网格邻域查询）
 	if player.iframes <= 0.0:
-		for e in enemies:
+		var near_p: Array = grid_neighbors(player.global_position, 48.0)
+		for e in near_p:
 			if not is_instance_valid(e) or e.dead:
 				continue
 			var rr2: float = e.radius + 11.0
@@ -299,11 +330,13 @@ func _spawn_xp_gem(pos: Vector2, value: int) -> void:
 	var g = load("res://scripts/gem.gd").new()
 	g.setup(self, pos + Vector2(randf_range(-10.0, 10.0), randf_range(-10.0, 10.0)), value)
 	gems_node.add_child(g)
+	g.reset_physics_interpolation()
 
 func _spawn_pickup(pos: Vector2, kind: String) -> void:
 	var g = load("res://scripts/gem.gd").new()
 	g.setup(self, pos, 1, kind)
 	gems_node.add_child(g)
+	g.reset_physics_interpolation()
 
 func collect_pickup(g) -> void:
 	match g.kind:
@@ -563,6 +596,7 @@ func _start_game() -> void:
 	player.z_index = 4
 	player.position = Vector2.ZERO
 	add_child(player)
+	player.reset_physics_interpolation()
 	camera.position = Vector2.ZERO
 	## 可破坏物：街道灯笼 + 服务器机柜
 	for i in GameConfig.BREAKABLE_COUNT:
@@ -572,6 +606,7 @@ func _start_game() -> void:
 			bpos = bpos.normalized() * 320.0
 		b.setup(self, bpos, "lantern" if i % 3 != 0 else "server")
 		props_node.add_child(b)
+		b.reset_physics_interpolation()
 	state = State.PLAYING
 	hud.set_hp(player.hp, player.max_hp)
 	hud.set_xp(level, xp, xp_next)
